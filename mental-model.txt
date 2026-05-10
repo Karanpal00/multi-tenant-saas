@@ -1,0 +1,5 @@
+Platform
+|___ Tenants
+     |___ Memberships
+          |___Users
+              |___Permissions/Roles

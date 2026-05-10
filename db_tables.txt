@@ -1,0 +1,10 @@
+// Tenant Table structure
+
+tenant
+- id uuid PRIMARY KEY
+- name varchar(256) NOT NULL
+- status ENUM('active', 'disabled', 'archived') DEFAULT 'active'
+- created_at timestamptz DEFAULT now()
+- updated_at timestamptz DEFAULT now()
+- archived_at timestamptz NULL
+
