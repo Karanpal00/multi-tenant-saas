@@ -2,9 +2,61 @@
 
 tenant
 - id uuid PRIMARY KEY
-- name varchar(256) NOT NULL
-- status ENUM('active', 'disabled', 'archived') DEFAULT 'active'
+- name varchar(255) NOT NULL
+- status ENUM('active', 'archived') DEFAULT 'active'
 - created_at timestamptz DEFAULT now()
 - updated_at timestamptz DEFAULT now()
 - archived_at timestamptz NULL
+
+-------------------------------------------------------------------------------------------------------------
+
+// Membership table
+
+tenant_users
+- tenant_id uuid
+- user_id uuid
+- role ENUM('owner', 'admin', 'manager', 'employee')
+- status ENUM('active', 'invited', 'removed', 'archived')
+- joined_at timestamptz DEFAULT now()
+
+PRIMARY KEY (tenant_id, user_id)
+
+Ref: tenant_id --> tenant.id
+Ref: user_id --> users.id
+
+-------------------------------------------------------------------------------------------------------------
+
+// Users table
+
+users
+- id uuid PRIMARY KEY
+- display_name varchar(255)
+- email varchar unique not null
+- password_hash varchar(255) not null
+- status ENUM('active', 'banned', 'pending_verification', 'archived')
+- created_at timestamptz DEFAULT now()
+- updated_at timestamptz DEFAULT now()
+- last_login_at timestamptz DEFAULT now()
+
+-------------------------------------------------------------------------------------------------------------
+
+// Items table
+
+items
+- id uuid PRIMARY KEY
+- tenant_id uuid
+- name varchar
+- sku unique varchar
+- price numeric
+- quantity int check (quantity>=0)
+- status ENUM('discontinued', 'active', 'archived', 'out_of_stock')
+- created_by uuid
+- updated_by uuid
+- created_at timestamptz DEFAULT now()
+- updated_at timestamptz DEFAULT now()
+
+Ref: created_by --> user.id
+Ref: updated_by --> user.id
+
+CREATE UNIQUE INDEX unique_sku_idx ON items(tenant_id, sku)
 
